@@ -1,3 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My Portfolio</title>
+
+  <!-- ✅ Add it HERE -->
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+  <h1>My Portfolio</h1>
+
+</body>
+</html>
+
+
 <div class="page-content">
   <h2>Student List</h2>
   <ul id="student-list" class="card-body"></ul>
@@ -5,7 +23,7 @@
 
 <script>
   // Replace with your JSON file URL
-  const jsonURL = "https://github.com/gsdmtanez/gsdm-firstrepo/blob/main/students.json";
+  const jsonURL = "https://gsdmtanez.github.io/gsdm-firstrepo/students.json";
 
   fetch(jsonURL)
     .then(response => {
@@ -26,4 +44,88 @@
       }
     })
     .catch(error => console.error("Error fetching JSON:", error));
+</script>
+
+
+<h2>Subjects Taken</h2>
+
+<input
+  type="text"
+  id="searchInput"
+  placeholder="Search subject (e.g., programming, database, web)..."
+/>
+
+<table border="1" cellpadding="8" id="course-table">
+  <thead>
+    <tr>
+      <th>Year</th>
+      <th>Sem</th>
+      <th>Code</th>
+      <th>Description</th>
+      <th>Credit</th>
+    </tr>
+  </thead>
+  <tbody id="course-body"></tbody>
+</table>
+
+
+<script>
+  const coursesURL = "https://gsdmtanez.github.io/gsdm-firstrepo/courses.json";
+
+  const courseBody = document.getElementById("course-body");
+  const searchInput = document.getElementById("searchInput");
+
+  let allCourses = []; // store original courses
+
+  function renderCourses(list) {
+    courseBody.innerHTML = ""; // clear table first
+
+    if (list.length === 0) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="5">No subjects found.</td>`;
+      courseBody.appendChild(tr);
+      return;
+    }
+
+    list.forEach(course => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${course.year_level}</td>
+        <td>${course.sem}</td>
+        <td>${course.code}</td>
+        <td>${course.description}</td>
+        <td>${course.credit}</td>
+      `;
+      courseBody.appendChild(tr);
+    });
+  }
+
+  fetch(coursesURL)
+    .then(res => {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    })
+    .then(data => {
+      if (!data.courses || !Array.isArray(data.courses)) {
+        console.error("Expected 'courses' array but got:", data);
+        return;
+      }
+
+      allCourses = data.courses;
+      renderCourses(allCourses);
+
+      // filter while typing
+      searchInput.addEventListener("input", () => {
+        const keyword = searchInput.value.toLowerCase().trim();
+
+        const filtered = allCourses.filter(course => {
+          const desc = (course.description || "").toLowerCase();
+          const code = (course.code || "").toLowerCase();
+          return desc.includes(keyword) || code.includes(keyword);
+        });
+
+        renderCourses(filtered);
+      });
+    })
+    .catch(err => console.error("Error fetching courses:", err));
 </script>
