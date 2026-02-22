@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>My Portfolio</title>
 
-  <!-- ✅ Add it HERE -->
+  
   <link rel="stylesheet" href="style.css">
 
 </head>
@@ -22,7 +22,7 @@
 </div>
 
 <script>
-  // Replace with your JSON file URL
+ 
   const jsonURL = "https://gsdmtanez.github.io/gsdm-firstrepo/students.json";
 
   fetch(jsonURL)
@@ -75,10 +75,10 @@
   const courseBody = document.getElementById("course-body");
   const searchInput = document.getElementById("searchInput");
 
-  let allCourses = []; // store original courses
+  let allCourses = []; 
 
   function renderCourses(list) {
-    courseBody.innerHTML = ""; // clear table first
+    courseBody.innerHTML = ""; 
 
     if (list.length === 0) {
       const tr = document.createElement("tr");
@@ -114,7 +114,7 @@
       allCourses = data.courses;
       renderCourses(allCourses);
 
-      // filter while typing
+      
       searchInput.addEventListener("input", () => {
         const keyword = searchInput.value.toLowerCase().trim();
 
