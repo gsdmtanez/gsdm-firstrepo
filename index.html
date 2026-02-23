@@ -2,60 +2,26 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>My Portfolio</title>
-
-  
+  <title>Montanez | My Portfolio</title>
   <link rel="stylesheet" href="style.css">
-
 </head>
+
 <body>
 
-  <h1>My Portfolio</h1>
-
-</body>
-</html>
 
 
-<div class="page-content">
-  <h2>Student List</h2>
-  <ul id="student-list" class="card-body"></ul>
-</div>
-
-<script>
- 
-  const jsonURL = "https://gsdmtanez.github.io/gsdm-firstrepo/students.json";
-
-  fetch(jsonURL)
-    .then(response => {
-      if (!response.ok) throw new Error("HTTP error " + response.status);
-      return response.json();
-    })
-    .then(data => {
-      const studentList = document.getElementById("student-list");
-
-      if (data.students && Array.isArray(data.students)) {
-        data.students.forEach(student => {
-          const li = document.createElement("li");
-          li.textContent = `${student.name} - ${student.age} (Course: ${student.course})`;
-          studentList.appendChild(li);
-        });
-      } else {
-        console.error("Expected 'students' array but got:", data);
-      }
-    })
-    .catch(error => console.error("Error fetching JSON:", error));
-</script>
-
+<h2>Student List</h2>
+<ul id="student-list"></ul>
 
 <h2>Subjects Taken</h2>
 
 <input
   type="text"
   id="searchInput"
-  placeholder="Search subject (e.g., programming, database, web)..."
+  placeholder="Search subject (e.g., Computer Programming, Discrete, Web System)..."
 />
 
-<table border="1" cellpadding="8" id="course-table">
+<table id="course-table">
   <thead>
     <tr>
       <th>Year</th>
@@ -68,17 +34,36 @@
   <tbody id="course-body"></tbody>
 </table>
 
-
 <script>
+  
+  const jsonURL = "https://gsdmtanez.github.io/gsdm-firstrepo/students.json";
+
+  fetch(jsonURL)
+    .then(response => response.json())
+    .then(data => {
+      const studentList = document.getElementById("student-list");
+
+      data.students.forEach(student => {
+        const li = document.createElement("li");
+        li.textContent = `${student.name} - ${student.age} (Course: ${student.course})`;
+        studentList.appendChild(li);
+      });
+    });
+
+  
   const coursesURL = "https://gsdmtanez.github.io/gsdm-firstrepo/courses.json";
 
+  const courseTable = document.getElementById("course-table");
   const courseBody = document.getElementById("course-body");
   const searchInput = document.getElementById("searchInput");
 
-  let allCourses = []; 
+  let allCourses = [];
+
+ 
+  courseTable.style.display = "none";
 
   function renderCourses(list) {
-    courseBody.innerHTML = ""; 
+    courseBody.innerHTML = "";
 
     if (list.length === 0) {
       const tr = document.createElement("tr");
@@ -101,31 +86,29 @@
   }
 
   fetch(coursesURL)
-    .then(res => {
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      return res.json();
-    })
+    .then(res => res.json())
     .then(data => {
-      if (!data.courses || !Array.isArray(data.courses)) {
-        console.error("Expected 'courses' array but got:", data);
-        return;
-      }
-
       allCourses = data.courses;
-      renderCourses(allCourses);
 
-      
       searchInput.addEventListener("input", () => {
         const keyword = searchInput.value.toLowerCase().trim();
 
-        const filtered = allCourses.filter(course => {
-          const desc = (course.description || "").toLowerCase();
-          const code = (course.code || "").toLowerCase();
-          return desc.includes(keyword) || code.includes(keyword);
-        });
+        if (keyword === "") {
+          courseTable.style.display = "none";
+          return;
+        }
+
+        courseTable.style.display = "table";
+
+        const filtered = allCourses.filter(course =>
+          course.description.toLowerCase().includes(keyword) ||
+          course.code.toLowerCase().includes(keyword)
+        );
 
         renderCourses(filtered);
       });
-    })
-    .catch(err => console.error("Error fetching courses:", err));
+    });
 </script>
+
+</body>
+</html>
